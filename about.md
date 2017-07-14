@@ -9,6 +9,8 @@ This is the base Jekyll theme. You can find out more info about customizing your
 Hello world
 {% endif %}
 {{ jekyll.environment }}
+{{ site.disqus_name }}
+{{ page.comments }}
 kkkhahahahah
 
 You can find the source code for the Jekyll new theme at:
