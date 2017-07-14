@@ -23,7 +23,7 @@ paginate_path: /page/:num
 
 # jekyll seo tag settings
 logo: assets/images/example-image.png
-twitter:
+#twitter:
   username: alxbean 
 
 # Build settings
