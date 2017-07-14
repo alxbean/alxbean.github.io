@@ -15,7 +15,7 @@ url: "http://alxbean.github.io" # the base hostname & protocol for your site
 
 github_username:  alxbean
 google_analytic_id:
-disqus_name:
+disqus_name:  alxbean
 
 permalink: /:categories/:title
 paginate: 5
