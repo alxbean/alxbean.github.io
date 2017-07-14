@@ -8,8 +8,8 @@ This is the base Jekyll theme. You can find out more info about customizing your
 {% if site.disqus_name and page.comments and jekyll.environment == "development" %}
 Hello world
 {% endif %}
-{jekyll.environment}
-hahahahah
+{%jekyll.environment%}
+kkkhahahahah
 
 You can find the source code for the Jekyll new theme at:
 {% include icon-github.html username="jglovier" %} /
