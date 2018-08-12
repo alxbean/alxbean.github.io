@@ -4,7 +4,7 @@
 
 和leveldb一样，skar也是基于skiplist一个key/value存储系统，与之不同的是leveldb是单个kv，后面的kv会覆盖之前kv的value值，因此，系统中永远只有一个有效的value值。然而对与实际中的一些场景，一个key往往对应了一个set，如一个班级，一个国家等，kv存储往往需要再做一层索引转换，在这样的情况下，一个key，mutli_values的存储系统往往可以很好的解决问题，即一个key映射了一个set，我把它称为k-s存储。skar存储系统的总体架构如下图所示：
 
-![scar总体架构](/Users/sean/Wildfire/alxbean.github.io/assets/skar/skar总体架构.png)
+![scar总体架构](https://github.com/alxbean/alxbean.github.io/blob/master/assets/skar/skar总体架构.png?raw=true)
 
 scar的结构非常简单，主要分成了3层：
 
@@ -26,13 +26,13 @@ skar数据流非常简单，没有过长的io路径，从而保证了数据读�
 
 1. 数据写
 
-   ![写数据流](/Users/sean/Wildfire/alxbean.github.io/assets/skar/写数据流.png)
+   ![写数据流](https://github.com/alxbean/alxbean.github.io/blob/master/assets/skar/写数据流.png?raw=true)
 
    写数据流首先在客户端发起调用，写入数据，然后在服务端首先记录到log日志中，记录完成后，在将写入文件系统，并更新内存中的跳表结构，记录其在文件中的索引位置
 
 2. 数据读
 
-![读数据流](/Users/sean/Downloads/读数据流.png)
+![读数据流](https://github.com/alxbean/alxbean.github.io/blob/master/assets/skar/读数据流.png?raw=true)
 
 用户发起读数据流后，首先根据key查询skiplist中相应的索引结点，并查询到该结点在文件中的位置，再到文件系统中查询该文件的数据，并返回给客户端完成查询。
 
@@ -40,7 +40,7 @@ skar数据流非常简单，没有过长的io路径，从而保证了数据读�
 
 skiplist即跳表，它是一种随机化的链表结构，查找效率能够达到Olog(n)，基本上是一颗AVL树的查找效率，然而skiplist的实现上却简单很多。一个简单的skiplist结构如下所示：
 
-![简单3层跳表](/Users/sean/Downloads/3层跳表.png)
+![简单3层跳表](https://github.com/alxbean/alxbean.github.io/blob/master/assets/skar/3层跳表.png?raw=true)
 
 如上图所示，查找结点17，可以直接在第三层跳过5，8结点，直接到10结点，然后下沉一个结点便可以查到17结点，从而大大的提高了查找效率。
 
@@ -48,7 +48,7 @@ skiplist即跳表，它是一种随机化的链表结构，查找效率能够达
 
 跳表能够达到Olog(n)的查找效率，但是它的key是唯一结点，在skar的底层设计中，设计的是一个结点对应了一个底层文件，那么将极大的浪费底层文件系统的inode，创建出大量的小文件，在key到百万级别，linux的文件系统将难以支撑，为此，将skiplist进行扩展，使的每个结点对应一个key的范围，该结点范围内的value值都存放在同一个底层文件中，当文件超过一点阈值时，对该结点进行分裂，将原文件重新分裂成2个新的底层文件，当两个相邻结点文件的小于一定的阈值时，将这两个结点重新合并成一个结点。基于范围结点的skiplist结构的实现使的，linux底层文件系统足以支撑数千万上亿级别的的kv结点，大大提升了skar的可用性。
 
-![范围跳表](/Users/sean/Wildfire/alxbean.github.io/assets/skar/范围跳表.png)
+![范围跳表](https://github.com/alxbean/alxbean.github.io/blob/master/assets/skar/范围跳表.png?raw=true)
 
 范围跳表中的每个结点是一个三元组结构<左边界，右边界，文件块索引>，通过该三元组结构可以表示出一个范围结点，其中左边界，表示大于并且等于该值，右边界表示小于该值，即[左边界，右边界)，文件块索引表示该结点所对应的文件块，方便数据的查询操作。
 
